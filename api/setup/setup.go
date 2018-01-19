@@ -11,7 +11,6 @@ import (
 )
 
 func Schemas(ctx context.Context, config *rest.Config, schemas *types.Schemas) error {
-	// subscribe.Register(&toolsschema.Version, schemas)
 	Logging(schemas)
 	ProjectLogging(schemas)
 
@@ -19,7 +18,12 @@ func Schemas(ctx context.Context, config *rest.Config, schemas *types.Schemas) e
 	if err != nil {
 		return err
 	}
+
 	var crdSchemas []*types.Schema
+	for _, schema := range schemas.SchemasForVersion(toolsschema.Version) {
+		crdSchemas = append(crdSchemas, schema)
+	}
+
 	if err := crdStore.AddSchemas(ctx, crdSchemas...); err != nil {
 		return err
 	}
