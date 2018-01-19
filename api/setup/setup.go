@@ -5,36 +5,31 @@ import (
 
 	"github.com/rancher/norman/store/crd"
 	"github.com/rancher/norman/types"
-	toolsschema "github.com/rancher/types/apis/tools.cattle.io/v3/schema"
-	"github.com/rancher/types/client/management/v3"
+	toolsschema "github.com/rancher/types/apis/tools.cattle.io/v4/schema"
+	toolsclient "github.com/rancher/types/client/tools/v4"
 	"k8s.io/client-go/rest"
 )
 
-// var (
-// 	crdVersions = []*types.APIVersion{
-// 		&toolsschema.Version,
-// 	}
-// )
-
-func Schemas(ctx context.Context, config rest.Config, schemas *types.Schemas) error {
+func Schemas(ctx context.Context, config *rest.Config, schemas *types.Schemas) error {
 	// subscribe.Register(&toolsschema.Version, schemas)
 	Logging(schemas)
 	ProjectLogging(schemas)
 
-	crdStore, err := crd.NewCRDStoreFromConfig(config)
+	crdStore, err := crd.NewCRDStoreFromConfig(*config)
 	if err != nil {
 		return err
 	}
 	var crdSchemas []*types.Schema
-	if err := crdStore.AddSchemas(ctx, schemas); err != nil {
+	if err := crdStore.AddSchemas(ctx, crdSchemas...); err != nil {
 		return err
 	}
+	return nil
 }
 
 func Logging(schemas *types.Schemas) {
-	schema := schemas.Schema(&toolsschema.Version, client.Logging)
+	schemas.Schema(&toolsschema.Version, toolsclient.LoggingType)
 }
 
 func ProjectLogging(schemas *types.Schemas) {
-	schema := schemas.Schema(&toolsschema.Version, client.ProjectLogging)
+	schemas.Schema(&toolsschema.Version, toolsclient.ProjectLoggingType)
 }

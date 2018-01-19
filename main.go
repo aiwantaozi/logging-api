@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/aiwantaozi/tools-api/server"
-	"github.com/rancher/types/config"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -24,12 +23,13 @@ func run() error {
 		return err
 	}
 
-	app, err := config.NewClusterContext(*kubeConfig, *kubeConfig, "local")
-	if err != nil {
-		return err
-	}
-
-	handler, err := server.New(context.Background(), app)
+	// app, err := config.NewClusterContext(*kubeConfig, *kubeConfig, "local")
+	// if err != nil {
+	// 	return err
+	// }
+	// var test restclient.Config
+	// test := kubeConfig
+	handler, err := server.New(context.Background(), kubeConfig)
 	if err != nil {
 		return err
 	}
