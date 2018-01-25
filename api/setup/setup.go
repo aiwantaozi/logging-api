@@ -3,10 +3,11 @@ package setup
 import (
 	"context"
 
+	loggingapi "github.com/rancher/logging-api/api/logging"
 	"github.com/rancher/norman/store/crd"
 	"github.com/rancher/norman/types"
-	toolsschema "github.com/rancher/types/apis/tools.cattle.io/v4/schema"
-	toolsclient "github.com/rancher/types/client/tools/v4"
+	loggingschema "github.com/rancher/types/apis/logging.cattle.io/v3/schema"
+	loggingclient "github.com/rancher/types/client/logging/v3"
 	"k8s.io/client-go/rest"
 )
 
@@ -20,7 +21,7 @@ func Schemas(ctx context.Context, config *rest.Config, schemas *types.Schemas) e
 	}
 
 	var crdSchemas []*types.Schema
-	for _, schema := range schemas.SchemasForVersion(toolsschema.Version) {
+	for _, schema := range schemas.SchemasForVersion(loggingschema.Version) {
 		crdSchemas = append(crdSchemas, schema)
 	}
 
@@ -31,9 +32,11 @@ func Schemas(ctx context.Context, config *rest.Config, schemas *types.Schemas) e
 }
 
 func Logging(schemas *types.Schemas) {
-	schemas.Schema(&toolsschema.Version, toolsclient.LoggingType)
+	schema := schemas.Schema(&loggingschema.Version, loggingclient.LoggingType)
+	schema.Validator = loggingapi.Validator
 }
 
 func ProjectLogging(schemas *types.Schemas) {
-	schemas.Schema(&toolsschema.Version, toolsclient.ProjectLoggingType)
+	schema := schemas.Schema(&loggingschema.Version, loggingclient.ProjectLoggingType)
+	schema.Validator = loggingapi.Validator
 }

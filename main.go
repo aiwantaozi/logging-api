@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/aiwantaozi/tools-api/server"
+	"github.com/rancher/logging-api/server"
 	"k8s.io/client-go/tools/clientcmd"
 )
 

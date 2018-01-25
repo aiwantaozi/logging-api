@@ -1,4 +1,4 @@
-tools-api
+logging-api
 ========
 
 A microservice that does micro things.
@@ -10,7 +10,7 @@ A microservice that does micro things.
 
 ## Running
 
-`./bin/tools-api`
+`./bin/logging-api`
 
 ## API Design
 
@@ -27,8 +27,8 @@ Content-Type: application/json
     "elasticsearchConfig": {
         "host": "192.168.1.10",
         "port": 9200,
-        "logstashPrefix": "local-", //format is cluster_id-
-        "logstashDateformat": "YYYY.MM.DD",
+        "indexPrefix": "local-", //format is cluster_id-
+        "dateformat": "YYYY.MM.DD",
         "authUser": "admin",
         "authPassword": "admin"
     },
@@ -47,14 +47,19 @@ Content-Type: application/json
         "brokerType": "broker",
         "brokers": ["192.168.1.10:2188", "192.168.1.11:2188"],
         "topic": "rancher",
-        "outputDataType": "json",
+        "dataType": "json",
         "maxSendRetries": 3
     },
     "syslogConfig": {
         "host": "192.168.1.12",
         "port": 514,rancher
         "severity": "notice",
-    }
+        "program": "fluentd"
+    },
+    "secrets":[
+        {"type":"secretReference","uid":"0","gid":"0","mode":"444","name":"elasticsearch-username","secretId":"ns2:username"},
+        {"type":"secretReference","uid":"0","gid":"0","mode":"444","name":"elasticsearch-password","secretId":"ns2:password"}
+    ]
 }
 ```
 
@@ -86,8 +91,8 @@ HTTP/1.1 POST /v3/projects/local:project-id/projectlogging
     "elasticsearchConfig": {
         "host": "192.168.1.10",
         "port": 9200,
-        "logstashPrefix": "local-", //format is cluster_id-
-        "logstashDateformat": "YYYY.MM.DD",
+        "indexPrefix": "local-", //format is cluster_id-
+        "dateformat": "YYYY.MM.DD",
         "authUser": "admin",
         "authPassword": "admin"
     },
@@ -103,14 +108,18 @@ HTTP/1.1 POST /v3/projects/local:project-id/projectlogging
         "brokerType": "broker",
         "brokers": ["192.168.1.10:2188", "192.168.1.11:2188"],
         "topic": "rancher",
-        "outputDataType": "json",
+        "dataType": "json",
         "maxSendRetries": 3
     },
     "syslogConfig": {
         "host": "192.168.1.12",
         "port": 514,rancher
         "severity": "notice",
-    }
+    },
+    "secrets":[
+        {"type":"secretReference","uid":"0","gid":"0","mode":"444","name":"elasticsearch-username","secretId":"ns2:username"},
+        {"type":"secretReference","uid":"0","gid":"0","mode":"444","name":"elasticsearch-password","secretId":"ns2:password"}
+    ]
 }
 ```
 #### DELETE
@@ -126,7 +135,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
 {
    "type":"collection",
    "links":{
-      "self":"http://localhost:1235/v4/schemas"
+      "self":"http://localhost:1235/v3/schemas"
    },
    "actions":{
 
@@ -136,7 +145,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
    },
    "sort":{
       "order":"asc",
-      "reverse":"http://localhost:1235/v4/schemas?order=desc"
+      "reverse":"http://localhost:1235/v3/schemas?order=desc"
    },
    "resourceType":"schema",
    "data":[
@@ -147,7 +156,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          "baseType":"schema",
          "id":"elasticsearchConfig",
          "links":{
-            "self":"http://localhost:1235/v4/schemas/elasticsearchConfig"
+            "self":"http://localhost:1235/v3/schemas/elasticsearchConfig"
          },
          "pluralName":"elasticsearchConfigs",
          "resourceFields":{
@@ -163,25 +172,25 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                "type":"string",
                "update":true
             },
+            "dateformat":{
+               "create":true,
+               "default":"YYYY.MM.DD",
+               "nullable":true,
+               "options":[
+                  "YYYY.MM.DD",
+                  "YYYY.MM",
+                  "YYYY"
+               ],
+               "type":"enum",
+               "update":true
+            },
             "host":{
                "create":true,
                "nullable":true,
                "type":"string",
                "update":true
             },
-            "logstashDateformat":{
-               "create":true,
-               "default":"YYYY.MM.DD",
-               "options":[
-                  "YYYY.MM.DD",
-                  "YYYY.MM",
-                  "YYYY"
-               ],
-               "required":true,
-               "type":"enum",
-               "update":true
-            },
-            "logstashPrefix":{
+            "indexPrefix":{
                "create":true,
                "nullable":true,
                "type":"string",
@@ -189,6 +198,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
             },
             "port":{
                "create":true,
+               "default":9200,
                "nullable":true,
                "type":"int",
                "update":true
@@ -196,9 +206,9 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          },
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       },
       {
@@ -208,17 +218,17 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          "baseType":"schema",
          "id":"embeddedConfig",
          "links":{
-            "self":"http://localhost:1235/v4/schemas/embeddedConfig"
+            "self":"http://localhost:1235/v3/schemas/embeddedConfig"
          },
          "pluralName":"embeddedConfigs",
          "resourceFields":{
-            "requestCPU":{
+            "elasticsearchAccessURL":{
                "create":true,
                "nullable":true,
                "type":"string",
                "update":true
             },
-            "requestMemory":{
+            "kibanaAccessURL":{
                "create":true,
                "nullable":true,
                "type":"string",
@@ -227,9 +237,9 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          },
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       },
       {
@@ -239,18 +249,18 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          "baseType":"schema",
          "id":"kafkaConfig",
          "links":{
-            "self":"http://localhost:1235/v4/schemas/kafkaConfig"
+            "self":"http://localhost:1235/v3/schemas/kafkaConfig"
          },
          "pluralName":"kafkaConfigs",
          "resourceFields":{
             "brokerType":{
                "create":true,
                "default":"zookeeper",
+               "nullable":true,
                "options":[
                   "broker",
                   "zookeeper"
                ],
-               "required":true,
                "type":"enum",
                "update":true
             },
@@ -260,22 +270,23 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                "type":"array[string]",
                "update":true
             },
-            "maxSendRetries":{
-               "create":true,
-               "nullable":true,
-               "type":"int",
-               "update":true
-            },
-            "outputDataType":{
+            "dataType":{
                "create":true,
                "default":"json",
+               "nullable":true,
                "options":[
                   "json",
                   "ltsv",
                   "msgpack"
                ],
-               "required":true,
                "type":"enum",
+               "update":true
+            },
+            "maxSendRetries":{
+               "create":true,
+               "default":1,
+               "nullable":true,
+               "type":"int",
                "update":true
             },
             "topic":{
@@ -292,6 +303,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
             },
             "zookeeperPort":{
                "create":true,
+               "default":2181,
                "nullable":true,
                "type":"int",
                "update":true
@@ -299,9 +311,9 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          },
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       },
       {
@@ -335,6 +347,14 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                ]
             },
             "displayName":{
+               "modifiers":[
+                  "eq",
+                  "ne",
+                  "in",
+                  "notin"
+               ]
+            },
+            "outputFlushInterval":{
                "modifiers":[
                   "eq",
                   "ne",
@@ -381,8 +401,8 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          ],
          "id":"logging",
          "links":{
-            "collection":"http://localhost:1235/v4/loggings",
-            "self":"http://localhost:1235/v4/schemas/logging"
+            "collection":"http://localhost:1235/v3/loggings",
+            "self":"http://localhost:1235/v3/schemas/logging"
          },
          "pluralName":"loggings",
          "resourceFields":{
@@ -451,6 +471,18 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                "type":"dnsLabel",
                "update":false
             },
+            "outputFlushInterval":{
+               "create":true,
+               "nullable":true,
+               "type":"int",
+               "update":true
+            },
+            "outputTags":{
+               "create":true,
+               "nullable":true,
+               "type":"map[string]",
+               "update":true
+            },
             "ownerReferences":{
                "create":false,
                "nullable":true,
@@ -480,6 +512,12 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                "type":"loggingStatus",
                "update":false
             },
+            "syslogConfig":{
+               "create":true,
+               "nullable":true,
+               "type":"syslogConfig",
+               "update":true
+            },
             "transitioning":{
                "create":false,
                "options":[
@@ -508,9 +546,9 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          ],
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       },
       {
@@ -520,16 +558,10 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          "baseType":"schema",
          "id":"loggingStatus",
          "links":{
-            "self":"http://localhost:1235/v4/schemas/loggingStatus"
+            "self":"http://localhost:1235/v3/schemas/loggingStatus"
          },
          "pluralName":"loggingStatuses",
          "resourceFields":{
-            "componentStatus":{
-               "create":false,
-               "nullable":true,
-               "type":"string",
-               "update":false
-            },
             "currentTarget":{
                "create":false,
                "nullable":true,
@@ -539,9 +571,9 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          },
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       },
       {
@@ -551,7 +583,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          "baseType":"schema",
          "id":"ownerReference",
          "links":{
-            "self":"http://localhost:1235/v4/schemas/ownerReference"
+            "self":"http://localhost:1235/v3/schemas/ownerReference"
          },
          "pluralName":"ownerReferences",
          "resourceFields":{
@@ -594,9 +626,9 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          },
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       },
       {
@@ -630,6 +662,14 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                ]
             },
             "namespaceId":{
+               "modifiers":[
+                  "eq",
+                  "ne",
+                  "in",
+                  "notin"
+               ]
+            },
+            "outputFlushInterval":{
                "modifiers":[
                   "eq",
                   "ne",
@@ -684,8 +724,8 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          ],
          "id":"projectLogging",
          "links":{
-            "collection":"http://localhost:1235/v4/projectloggings",
-            "self":"http://localhost:1235/v4/schemas/projectLogging"
+            "collection":"http://localhost:1235/v3/projectloggings",
+            "self":"http://localhost:1235/v3/schemas/projectLogging"
          },
          "pluralName":"projectLoggings",
          "resourceFields":{
@@ -724,12 +764,6 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                "type":"elasticsearchConfig",
                "update":true
             },
-            "embeddedConfig":{
-               "create":true,
-               "nullable":true,
-               "type":"embeddedConfig",
-               "update":true
-            },
             "kafkaConfig":{
                "create":true,
                "nullable":true,
@@ -754,6 +788,18 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                "required":true,
                "type":"reference[namespace]",
                "update":false
+            },
+            "outputFlushInterval":{
+               "create":true,
+               "nullable":true,
+               "type":"int",
+               "update":true
+            },
+            "outputTags":{
+               "create":true,
+               "nullable":true,
+               "type":"map[string]",
+               "update":true
             },
             "ownerReferences":{
                "create":false,
@@ -790,6 +836,12 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
                "type":"loggingStatus",
                "update":false
             },
+            "syslogConfig":{
+               "create":true,
+               "nullable":true,
+               "type":"syslogConfig",
+               "update":true
+            },
             "transitioning":{
                "create":false,
                "options":[
@@ -818,9 +870,9 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          ],
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       },
       {
@@ -830,7 +882,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          "baseType":"schema",
          "id":"splunkConfig",
          "links":{
-            "self":"http://localhost:1235/v4/schemas/splunkConfig"
+            "self":"http://localhost:1235/v3/schemas/splunkConfig"
          },
          "pluralName":"splunkConfigs",
          "resourceFields":{
@@ -842,6 +894,7 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
             },
             "port":{
                "create":true,
+               "default":8088,
                "nullable":true,
                "type":"int",
                "update":true
@@ -849,11 +902,11 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
             "protocol":{
                "create":true,
                "default":"http",
+               "nullable":true,
                "options":[
                   "http",
                   "https"
                ],
-               "required":true,
                "type":"enum",
                "update":true
             },
@@ -866,12 +919,12 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
             "timeFormat":{
                "create":true,
                "default":"unixtime",
+               "nullable":true,
                "options":[
                   "unixtime",
                   "localtime",
                   "none"
                ],
-               "required":true,
                "type":"enum",
                "update":true
             },
@@ -884,9 +937,64 @@ HTTP/1.1 PUT /v3/projects/local:project-id/projectlogging/project-logging
          },
          "type":"schema",
          "version":{
-            "group":"tools.cattle.io",
-            "path":"/v4",
-            "version":"v4"
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
+         }
+      },
+      {
+         "actions":{
+
+         },
+         "baseType":"schema",
+         "id":"syslogConfig",
+         "links":{
+            "self":"http://localhost:1235/v3/schemas/syslogConfig"
+         },
+         "pluralName":"syslogConfigs",
+         "resourceFields":{
+            "host":{
+               "create":true,
+               "nullable":true,
+               "type":"string",
+               "update":true
+            },
+            "port":{
+               "create":true,
+               "default":51400,
+               "nullable":true,
+               "type":"int",
+               "update":true
+            },
+            "program":{
+               "create":true,
+               "nullable":true,
+               "type":"string",
+               "update":true
+            },
+            "severity":{
+               "create":true,
+               "default":"notice",
+               "nullable":true,
+               "options":[
+                  "emerg",
+                  "alert",
+                  "crit",
+                  "err",
+                  "warning",
+                  "notice",
+                  "info",
+                  "debug"
+               ],
+               "type":"enum",
+               "update":true
+            }
+         },
+         "type":"schema",
+         "version":{
+            "group":"logging.cattle.io",
+            "path":"/v3",
+            "version":"v3"
          }
       }
    ]

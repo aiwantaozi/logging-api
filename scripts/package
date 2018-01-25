@@ -16,9 +16,9 @@ if echo $TAG | grep -q dirty; then
     TAG=dev
 fi
 
-cp ../bin/tools-api .
+cp ../bin/logging-api .
 
-IMAGE=${REPO}/tools-api:${TAG}
+IMAGE=${REPO}/logging-api:${TAG}
 docker build -t ${IMAGE} .
 echo ${IMAGE} > ../dist/images
 echo Built ${IMAGE}
