@@ -10,17 +10,18 @@ import (
 	"github.com/rancher/norman/parse"
 	"github.com/rancher/norman/types"
 	loggingSchema "github.com/rancher/types/apis/logging.cattle.io/v3/schema"
+	"github.com/rancher/types/config"
 	"k8s.io/client-go/rest"
 )
 
-func New(ctx context.Context, config *rest.Config) (http.Handler, error) {
+func New(ctx context.Context, logCtx config.LoggingContext, config *rest.Config) (http.Handler, error) {
 	schemas := types.NewSchemas().
 		AddSchemas(loggingSchema.Schemas)
 
 	if err := setup.Schemas(ctx, config, schemas); err != nil {
 		return nil, err
 	}
-	setup.AddDate()
+	setup.AddDate(logCtx)
 
 	server := normanapi.NewAPIServer()
 	server.URLParser = func(schemas *types.Schemas, url *url.URL) (parse.ParsedURL, error) {

@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/rancher/logging-api/server"
+	"github.com/rancher/types/config"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -23,13 +24,12 @@ func run() error {
 		return err
 	}
 
-	// app, err := config.NewClusterContext(*kubeConfig, *kubeConfig, "local")
-	// if err != nil {
-	// 	return err
-	// }
-	// var test restclient.Config
-	// test := kubeConfig
-	handler, err := server.New(context.Background(), kubeConfig)
+	logCtx, err := config.NewLoggingContext(*kubeConfig)
+	if err != nil {
+		return err
+	}
+
+	handler, err := server.New(context.Background(), *logCtx, kubeConfig)
 	if err != nil {
 		return err
 	}

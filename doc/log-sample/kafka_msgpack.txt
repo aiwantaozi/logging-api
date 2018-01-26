@@ -1,0 +1,10 @@
+��log�IWaiting for web server at http://127.0.0.1:8000 to be available.... Done
+�stream�stdout�docker��container_id�@5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274�kubernetes��container_name�splunk�namespace_name�cattle-system�pod_name�splunk-dep-848b7cbdd-5jqd4�time�ZWrI�tagْkubernetes.var.log.containers.splunk-dep-848b7cbdd-5jqd4_cattle-system_splunk-5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274.log
+��log�(If you get stuck, we're here to help.
+�stream�stdout�docker��container_id�@5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274�kubernetes��container_name�splunk�namespace_name�cattle-system�pod_name�splunk-dep-848b7cbdd-5jqd4�time�ZWrI�tagْkubernetes.var.log.containers.splunk-dep-848b7cbdd-5jqd4_cattle-system_splunk-5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274.log
+��log�FThe Splunk web interface is at http://splunk-dep-848b7cbdd-5jqd4:8000
+�stream�stdout�docker��container_id�@5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274�kubernetes��container_name�splunk�namespace_name�cattle-system�pod_name�splunk-dep-848b7cbdd-5jqd4�time�ZWrI�tagْkubernetes.var.log.containers.splunk-dep-848b7cbdd-5jqd4_cattle-system_splunk-5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274.log
+��log�,Listening for Splunk data on TCP port 9997.
+�stream�stdout�docker��container_id�@5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274�kubernetes��container_name�splunk�namespace_name�cattle-system�pod_name�splunk-dep-848b7cbdd-5jqd4�time�ZWrI�tagْkubernetes.var.log.containers.splunk-dep-848b7cbdd-5jqd4_cattle-system_splunk-5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274.log
+��log�%Listening for data on TCP port 1514.
+�stream�stdout�docker��container_id�@5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274�kubernetes��container_name�splunk�namespace_name�cattle-system�pod_name�splunk-dep-848b7cbdd-5jqd4�time�ZWrJ�tagْkubernetes.var.log.containers.splunk-dep-848b7cbdd-5jqd4_cattle-system_splunk-5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274.log

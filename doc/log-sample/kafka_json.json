@@ -1,0 +1,14 @@
+{
+    "log": "your log is here \n",
+    "stream": "stdout",
+    "docker": {
+        "container_id": "5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274"
+    },
+    "kubernetes": {
+        "container_name": "splunk",
+        "namespace_name": "cattle-system",
+        "pod_name": "splunk-dep-848b7cbdd-5jqd4"
+    },
+    "time": 1515680329,
+    "tag": "kubernetes.var.log.containers.splunk-dep-848b7cbdd-5jqd4_cattle-system_splunk-5f07a15a2a60ef48a8c4df3a9d82395f211e5aa0452eac11bf6303d328564274.log"
+}

@@ -64,10 +64,6 @@ func (j *JSONResponseWriter) writeMapSlice(builder *builder.Builder, apiContext 
 		}
 	}
 
-	if apiContext.Schema.CollectionFormatter != nil {
-		apiContext.Schema.CollectionFormatter(apiContext, collection)
-	}
-
 	return collection
 }
 
@@ -84,11 +80,6 @@ func (j *JSONResponseWriter) writeInterfaceSlice(builder *builder.Builder, apiCo
 			collection.Data = append(collection.Data, v)
 		}
 	}
-
-	if apiContext.Schema.CollectionFormatter != nil {
-		apiContext.Schema.CollectionFormatter(apiContext, collection)
-	}
-
 	return collection
 }
 
@@ -104,11 +95,7 @@ func (j *JSONResponseWriter) convert(b *builder.Builder, context *types.APIConte
 	if schema == nil {
 		return nil
 	}
-	op := builder.List
-	if context.Method == http.MethodPost {
-		op = builder.ListForCreate
-	}
-	data, err := b.Construct(schema, input, op)
+	data, err := b.Construct(schema, input, builder.List)
 	if err != nil {
 		logrus.Errorf("Failed to construct object on output: %v", err)
 		return nil

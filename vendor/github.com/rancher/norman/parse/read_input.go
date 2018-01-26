@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/rancher/norman/httperror"
@@ -21,11 +22,14 @@ func ReadBody(req *http.Request) (map[string]interface{}, error) {
 		return nil, nil
 	}
 
-	dec := json.NewDecoder(io.LimitReader(req.Body, reqMaxSize))
-	dec.UseNumber()
+	content, err := ioutil.ReadAll(io.LimitReader(req.Body, reqMaxSize))
+	if err != nil {
+		return nil, httperror.NewAPIError(httperror.InvalidBodyContent,
+			fmt.Sprintf("Body content longer than %d bytes", reqMaxSize-1))
+	}
 
 	data := map[string]interface{}{}
-	if err := dec.Decode(&data); err != nil {
+	if err := json.Unmarshal(content, &data); err != nil {
 		return nil, httperror.NewAPIError(httperror.InvalidBodyContent,
 			fmt.Sprintf("Failed to parse body: %v", err))
 	}

@@ -32,11 +32,11 @@ var (
 
 type ErrorCode struct {
 	code   string
-	Status int
+	status int
 }
 
 func (e ErrorCode) String() string {
-	return fmt.Sprintf("%s %d", e.code, e.Status)
+	return fmt.Sprintf("%s %d", e.code, e.status)
 }
 
 type APIError struct {
@@ -49,7 +49,7 @@ type APIError struct {
 func NewAPIErrorLong(status int, code, message string) error {
 	return NewAPIError(ErrorCode{
 		code:   code,
-		Status: status,
+		status: status,
 	}, message)
 }
 

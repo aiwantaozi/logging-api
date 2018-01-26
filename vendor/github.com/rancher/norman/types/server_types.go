@@ -1,7 +1,6 @@
 package types
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/url"
@@ -55,8 +54,6 @@ type Validator func(request *APIContext, schema *Schema, data map[string]interfa
 
 type Formatter func(request *APIContext, resource *RawResource)
 
-type CollectionFormatter func(request *APIContext, collection *GenericCollection)
-
 type ErrorHandler func(request *APIContext, err error)
 
 type SubContextAttributeProvider interface {
@@ -101,23 +98,6 @@ type APIContext struct {
 
 	Request  *http.Request
 	Response http.ResponseWriter
-}
-
-type apiContextKey struct{}
-
-func NewAPIContext(req *http.Request, resp http.ResponseWriter, schemas *Schemas) *APIContext {
-	apiCtx := &APIContext{
-		Response: resp,
-		Schemas:  schemas,
-	}
-	ctx := context.WithValue(req.Context(), apiContextKey{}, apiCtx)
-	apiCtx.Request = req.WithContext(ctx)
-	return apiCtx
-}
-
-func GetAPIContext(ctx context.Context) *APIContext {
-	apiContext, _ := ctx.Value(apiContextKey{}).(*APIContext)
-	return apiContext
 }
 
 func (r *APIContext) WriteResponse(code int, obj interface{}) {
@@ -168,7 +148,6 @@ type ReferenceValidator interface {
 type URLBuilder interface {
 	Current() string
 	Collection(schema *Schema, versionOverride *APIVersion) string
-	CollectionAction(schema *Schema, versionOverride *APIVersion, action string) string
 	SubContextCollection(subContext *Schema, contextName string, schema *Schema) string
 	SchemaLink(schema *Schema) string
 	ResourceLink(resource *RawResource) string
