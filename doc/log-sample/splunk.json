@@ -1,0 +1,20 @@
+{
+    "log": "time=\"2018-01-26T16:42:34Z\" level=info msg=\"Cluster [local] condition status unknown\"\n",
+    "stream": "stderr",
+    "docker": {
+        "container_id": "a7dfa2da2550bb45f0c1fed5a315e13ea27ee0d50ce83359fdec49ed981db865"
+    },
+    "kubernetes": {
+        "container_name": "cattle",
+        "namespace_name": "default",
+        "pod_name": "cattle-6b4ccb5b9d-v57vw",
+        "pod_id": "30c685d0-fa43-11e7-b992-00163e016dc2",
+        "labels": {
+            "app": "cattle",
+            "pod-template-hash": "2607761658"
+        },
+        "host": "47.52.113.251",
+        "master_url": "https://10.233.0.1:443/api"
+    },
+    "tag": "default.var.log.containers.cattle-6b4ccb5b9d-v57vw_default_cattle-a7dfa2da2550bb45f0c1fed5a315e13ea27ee0d50ce83359fdec49ed981db865.log"
+}

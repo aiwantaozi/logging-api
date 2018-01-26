@@ -1,0 +1,27 @@
+{
+    "_index": "default-2018.01.15",
+    "_type": "container_log",
+    "_id": "AWD68LuuhwVvf5LMJq1h",
+    "_version": 1,
+    "_source": {
+        "log": "time=\"2018-01-15T17:49:26Z\" level=info msg=\"Creating cluster event [Created container]\"\n",
+        "stream": "stderr",
+        "docker": {
+            "container_id": "888f41afb92b1454fc5ba7baff87a50bad80b834e08d9f0bea042d77f4b2ec76"
+        },
+        "kubernetes": {
+            "container_name": "cattle",
+            "namespace_name": "default",
+            "pod_name": "cattle-6b4ccb5b9d-tzs4q",
+            "pod_id": "a958b2d8-f6b0-11e7-b992-00163e016dc2",
+            "labels": {
+                "app": "cattle",
+                "pod-template-hash": "2607761658"
+            },
+            "host": "47.89.14.205",
+            "master_url": "https://10.233.0.1:443/api"
+        },
+        "tag": "default.var.log.containers.cattle-6b4ccb5b9d-tzs4q_default_cattle-888f41afb92b1454fc5ba7baff87a50bad80b834e08d9f0bea042d77f4b2ec76.log",
+        "@timestamp": "2018-01-15T17:49:26.000000000+00:00"
+    }
+}
